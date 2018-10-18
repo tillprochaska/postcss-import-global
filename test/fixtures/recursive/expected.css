@@ -1,0 +1,9 @@
+/* a.css */
+/* b.css */
+:global(body) {
+    background: blue;
+    color: white;
+}
+:global(a) {
+    color: yellow;
+}

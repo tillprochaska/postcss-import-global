@@ -1,0 +1,5 @@
+@import-global 'a.css';
+
+a {
+    color: yellow;
+}

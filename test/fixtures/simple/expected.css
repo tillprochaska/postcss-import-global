@@ -1,0 +1,10 @@
+/* a.css */
+
+:global(body) {
+    background: blue;
+    color: white;
+}
+
+a {
+    color: yellow;
+}

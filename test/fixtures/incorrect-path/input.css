@@ -1,0 +1,6 @@
+@import-global "a.css";
+
+body {
+    background: blue;
+    color: white;
+}
