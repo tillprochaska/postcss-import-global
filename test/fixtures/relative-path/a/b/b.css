@@ -1,8 +1,4 @@
-:global(body) {
+body {
     background: blue;
     color: white;
-}
-
-a {
-    color: yellow;
 }

@@ -8,10 +8,7 @@ class ImportGlobalPlugin {
         this.result = result;
         this.processor = processor;
         this.options = options;
-
-        if(!options.basePath) {
-            this.options.basePath = path.dirname(this.options.from);
-        }
+        this.basePath = options.basePath || path.dirname(options.from);
     }
 
     /*
@@ -23,31 +20,29 @@ class ImportGlobalPlugin {
         let transforms = [];
 
         tree.walkAtRules('import-global', async importRule => {
-            let transform = this.transformImportRule(importRule).catch(error => {
-                this.result.warn(error.message, { node: importRule });
-                importRule.remove();
-            });
-            transforms.push(transform);
-            transform.then(css => {
-                this.result.messages.push({
-                    type: 'dependency',
-                    file: css.source.input.file,
-                    parent: this.options.from,
-                });
+            let transform = this.transformImportRule(importRule).then(css => {
 
                 if(!css) {
                     importRule.remove();
                     return;
                 }
 
-                const comment = postcss.comment({
-                    text: path.relative(this.options.basePath, css.source.input.file),
+                this.result.messages.push({
+                    type: 'dependency',
+                    file: css.source.input.file,
+                    parent: this.options.from,
                 });
 
-                importRule.before(comment);
                 importRule.after(css.nodes);
                 importRule.remove();
+
+            }).catch(error => {
+                this.result.warn(error.message, { node: importRule });
+                importRule.remove();
             });
+
+            transforms.push(transform);
+
         });
 
         return Promise.all(transforms).then(() => {
@@ -63,8 +58,8 @@ class ImportGlobalPlugin {
     async transformImportRule(importRule) {
         const filePath = importRule.params.replace(/['"]/g, '');
 
-        let css = await this.parseFile(filePath);
-        css = await this.globalizeCss(css);
+        let css = this.parseFile(filePath);
+        css = this.globalizeCss(css);
         css = await this.processCss(css);
 
         return css;
@@ -87,7 +82,7 @@ class ImportGlobalPlugin {
      * Walks through all rules of an PostCSS `Root` element
      * and wraps selectors with :global().
      */
-    async globalizeCss(css) {
+    globalizeCss(css) {
         let clone = css.clone();
 
         clone.walkRules(rule => {
@@ -103,8 +98,8 @@ class ImportGlobalPlugin {
      * Reads the file’s contents and passes them to
      * the PostCSS parser.
      */
-    async parseFile(filePath) {
-        filePath = path.resolve(this.options.basePath, filePath);
+    parseFile(filePath) {
+        filePath = path.resolve(this.basePath, filePath);
 
         if(!fs.existsSync(filePath)) {
             let message = `No such file: ${ path.relative(process.cwd(), filePath) }`;
@@ -126,7 +121,7 @@ export default postcss.plugin('postcss-import-global', options => {
             from: tree.source.input.file
         };
 
-        const plugin = new ImportGlobalPlugin({
+        let plugin = new ImportGlobalPlugin({
             result,
             processor: result.processor,
             options,

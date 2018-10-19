@@ -19,3 +19,8 @@ it('ignores incorrect filepath', async () => {
     expect(messages[0].type).toBe('warning');
     expect(messages[0].text).toContain('No such file: ');
 });
+
+it('resolves relative filepaths', async () => {
+    let { output, expected } = await processFixture('relative-path');
+    expect(output).toEqual(expected);
+});

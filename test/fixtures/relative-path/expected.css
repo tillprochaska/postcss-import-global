@@ -2,7 +2,3 @@
     background: blue;
     color: white;
 }
-
-:global(a) {
-    color: yellow;
-}
