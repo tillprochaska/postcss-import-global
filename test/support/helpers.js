@@ -1,9 +1,9 @@
-import postcss from 'postcss';
-import importGlobal from '../../src/index.js';
-import fs from 'fs';
-import path from 'path';
+const postcss = require('postcss');
+const importGlobal = require('../../cjs/index.js').default;
+const fs = require('fs');
+const path = require('path');
 
-export async function processFixture(fixture) {
+const processFixture = async fixture => {
     const processor = await postcss([ importGlobal() ]);
 
     let inputPath = path.resolve(__dirname, '../fixtures', fixture, 'input.css');
@@ -17,4 +17,6 @@ export async function processFixture(fixture) {
     });
 
     return { result, input, output: result.css, expected };
-}
+};
+
+module.exports = { processFixture };

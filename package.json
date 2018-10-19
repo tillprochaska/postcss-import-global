@@ -2,12 +2,16 @@
   "name": "postcss-import-global",
   "version": "0.1.0",
   "description": "",
-  "main": "src/index.js",
+  "main": "cjs/index.js",
+  "module": "esm/index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "jest"
+    "test": "mocha test/specs/*.js",
+    "build": "tsc",
+    "dev": "tsc -w",
+    "install": "npm run build"
   },
   "author": "Till Prochaska <mail@tillprochaska.de>",
   "license": "MIT",
@@ -15,11 +19,8 @@
     "postcss": "^7.0.5"
   },
   "devDependencies": {
-    "@babel/core": "^7.1.2",
-    "@babel/preset-env": "^7.1.0",
-    "babel-core": "^7.0.0-bridge.0",
-    "babel-jest": "^23.6.0",
-    "jest": "^23.6.0",
-    "regenerator-runtime": "^0.12.1"
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0",
+    "typescript": "^3.1.3"
   }
 }

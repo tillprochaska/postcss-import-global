@@ -1,6 +1,6 @@
-import postcss from 'postcss';
-import path from 'path';
-import fs from 'fs';
+import * as postcss from 'postcss';
+import * as path from 'path';
+import * as fs from 'fs';
 
 class ImportGlobalPlugin {
 
